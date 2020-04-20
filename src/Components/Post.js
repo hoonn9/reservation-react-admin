@@ -36,8 +36,8 @@ export const PostList = (props) => {
         <TextField source="title" />
         <TextField source="views" />
         <TextField source="createdAt" />
-        <ReferenceField source="id" reference="user">
-          <TextField disabled source="id" />
+        <ReferenceField source="user.id" reference="User">
+          <TextField source="id" />
         </ReferenceField>
         <EditButton />
       </Datagrid>

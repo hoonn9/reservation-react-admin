@@ -98,6 +98,68 @@ export default {
         phoneNum
         bio
         address
+        reservations {
+          id
+        }
+        createdAt
+      }
+    `,
+  },
+  Reservation: {
+    [GET_LIST]: gql`
+      fragment reservation on Reservation {
+        id
+        user {
+          id
+        }
+        noUser {
+          id
+        }
+        guest {
+          id
+        }
+        subType {
+          id
+          subTypeName
+          price
+        }
+        checkIn
+        checkOut
+        count
+        needs
+        adult
+        child
+        price
+        createdAt
+      }
+    `,
+  },
+  NoUser: {
+    [GET_LIST]: gql`
+      fragment noUser on NoUser {
+        id
+        username
+        email
+        phoneNum
+        bio
+        reservations {
+          id
+        }
+        createdAt
+      }
+    `,
+  },
+  Guest: {
+    [GET_LIST]: gql`
+      fragment guest on Guest {
+        id
+        username
+        email
+        phoneNum
+        bio
+        reservation {
+          id
+        }
         createdAt
       }
     `,

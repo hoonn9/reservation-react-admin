@@ -12,6 +12,9 @@ import buildPrismaProvider, { buildQuery } from "ra-data-opencrud";
 import overridenQueries from "./Queries";
 import ApolloClient from "apollo-boost";
 import get from "lodash/get";
+import { ReservationList } from "./Components/Reservation";
+import { NoUserList } from "./Components/NoUser";
+import { GuestList } from "./Components/Guest";
 //const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com");
 
 const enhanceBuildQuery = (buildQuery) => (introspectionResults) => (
@@ -54,6 +57,10 @@ class App extends Component {
     return (
       <Admin dataProvider={dataProvider}>
         <Resource name="Post" icon={PostIcon} list={PostList} />
+        <Resource name="User" icon={UserIcon} list={UserList} />
+        <Resource name="NoUser" list={NoUserList} />
+        <Resource name="Guest" list={GuestList} />
+        <Resource name="Reservation" list={ReservationList} />
       </Admin>
     );
   }
