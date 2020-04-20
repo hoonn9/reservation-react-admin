@@ -28,27 +28,19 @@ const PostFilter = (props) => (
 
 export const PostList = (props) => {
   console.log(props);
-  const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  //const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   return (
-    <List filters={<PostFilter />} {...props}>
-      {isSmall ? (
-        <SimpleList
-          primaryText={(record) => record.title}
-          secondaryText={(record) => `${record.views} views`}
-          tertiaryText={(record) =>
-            new Date(record.published_at).toLocaleDateString()
-          }
-        />
-      ) : (
-        <Datagrid>
-          <TextField source="id" />
-          <ReferenceField source="userId" reference="users">
-            <TextField source="name" />
-          </ReferenceField>
-          <TextField source="title" />
-          <EditButton />
-        </Datagrid>
-      )}
+    <List {...props}>
+      <Datagrid>
+        <TextField source="id" />
+        <TextField source="title" />
+        <TextField source="views" />
+        <TextField source="createdAt" />
+        <ReferenceField source="id" reference="user">
+          <TextField disabled source="id" />
+        </ReferenceField>
+        <EditButton />
+      </Datagrid>
     </List>
   );
 };
@@ -74,8 +66,8 @@ export const PostEdit = (props) => (
   <Edit title={<PostTitle />} {...props}>
     <SimpleForm>
       <TextInput disabled source="id" />
-      <ReferenceInput source="userId" reference="users">
-        <SelectInput optionText="name" />
+      <ReferenceInput source="userId" reference="user">
+        <TextInput disabled source="id" />
       </ReferenceInput>
       <TextInput source="title" />
       <TextInput multiline source="body" />

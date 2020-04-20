@@ -1,36 +1,50 @@
 import { fetchUtils } from "react-admin";
 import { stringify } from "query-string";
+import { listQueries, updateQueries, oneQueries } from "./Queries";
+
 import axios from "axios";
 const apiUrl = process.env.REACT_APP_PROD_URL;
 const httpClient = fetchUtils.fetchJson;
 
 export default {
   getList: async (resource, params) => {
+    console.log(resource, params);
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
-    const query = `{
-        users {
-          id
-        }
-      }`;
-    const url = apiUrl + "/graphql";
-    const user = await axios(apiUrl, {
+    const query = listQueries[resource];
+    //console.log(query);
+    const list = await axios(apiUrl, {
       method: "post",
       data: {
         query,
       },
-    }).then((res) => res.data.data.users);
-    console.log(JSON.stringify(user));
+    }).then((res) => res.data.data);
+    const data = list[Object.keys(list)[0]];
+
+    console.log(data);
     return {
-      data: user,
-      total: 10,
+      data,
+      total: data.length,
     };
   },
 
-  getOne: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`).then(({ json }) => ({
-      data: json,
-    })),
+  getOne: async (resource, params) => {
+    console.log(resource, params);
+    const { id } = params;
+    const queryFunc = oneQueries[resource];
+    const query = queryFunc(id);
+
+    const one = await axios(apiUrl, {
+      method: "post",
+      data: {
+        query,
+      },
+    }).then((res) => {
+      console.log(res);
+      return res.data;
+    });
+    return one;
+  },
 
   getMany: (resource, params) => {
     const query = {
@@ -59,11 +73,23 @@ export default {
     }));
   },
 
-  update: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`, {
+  update: (resource, params) => {
+    console.log(resource, params);
+
+    const query = eval(`updateQueries.${resource}`);
+    console.log(query);
+    // const list = await axios(apiUrl, {
+    //   method: "post",
+    //   data: {
+    //     query,
+    //   },
+    // }).then((res) => res.data.data);
+
+    return httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
-    }).then(({ json }) => ({ data: json })),
+    }).then(({ json }) => ({ data: json }));
+  },
 
   updateMany: (resource, params) => {
     const query = {
