@@ -111,16 +111,28 @@ export default {
         id
         user {
           id
+          username
+          bio
+          phoneNum
+          email
         }
         noUser {
           id
+          username
+          bio
+          phoneNum
+          email
         }
         guest {
           id
+          username
+          bio
+          phoneNum
+          email
         }
-        subType {
+        room {
           id
-          subTypeName
+          name
           price
         }
         checkIn
