@@ -1,4 +1,4 @@
-import { GET_LIST } from "react-admin";
+import { GET_LIST, GET_ONE, UPDATE } from "react-admin";
 import gql from "graphql-tag";
 
 export const listQueries = {
@@ -111,6 +111,7 @@ export default {
         id
         user {
           id
+          userId
           username
           bio
           phoneNum
@@ -143,6 +144,36 @@ export default {
         child
         price
         createdAt
+      }
+    `,
+    [GET_ONE]: gql`
+      fragment reservation on Reservation {
+        id
+        user {
+          id
+        }
+        noUser {
+          id
+        }
+        guest {
+          id
+          username
+          bio
+          phoneNum
+          email
+        }
+        room {
+          id
+          name
+          price
+        }
+        checkIn
+        checkOut
+        count
+        needs
+        adult
+        child
+        price
       }
     `,
   },

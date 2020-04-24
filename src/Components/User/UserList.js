@@ -18,13 +18,10 @@ import {
   SelectInput,
   Create,
   Filter,
+  ShowButton,
 } from "react-admin";
 
-const UserTitle = ({ record }) => {
-  return <span>User {record ? `"${record.title}"` : ""}</span>;
-};
-
-export const UserList = (props) => (
+export default (props) => (
   <List {...props}>
     <Datagrid rowClick="edit">
       <TextField source="id" />
@@ -36,18 +33,8 @@ export const UserList = (props) => (
       <TextField source="bio" />
       <TextField source="address" />
       <TextField source="createdAt" />
+      <EditButton />
+      <ShowButton />
     </Datagrid>
   </List>
-);
-
-export const EditUser = (props) => (
-  <Edit title={<UserTitle />} {...props}>
-    <SimpleForm>
-      <TextInput disabled source="id" />
-      <TextInput disabled source="userId" />
-      <TextInput source="username" />
-      <TextInput disabled source="email" />
-      <TextInput multiline source="address" />
-    </SimpleForm>
-  </Edit>
 );
