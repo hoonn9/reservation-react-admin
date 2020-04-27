@@ -138,6 +138,20 @@ const getLanguage = (language = "kr") => {
       text_total: "총합",
       text_secret: "시크릿",
       text_is_agree: "활용 동의",
+      text_post: "게시글",
+      text_board: "게시판",
+      text_writer: "작성자",
+      text_createdAt: "생성일",
+      text_updatedAt: "갱신일",
+      text_type: "타입",
+      text_title: "제목",
+      text_content: "내용",
+      text_comment: "댓글",
+      text_views: "조회수",
+      text_file: "파일",
+      text_files: "파일",
+      text_url: "경로",
+      text_link: "링크",
     };
   } else if (language === "en") {
     return {

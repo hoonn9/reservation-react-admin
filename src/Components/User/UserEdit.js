@@ -71,10 +71,14 @@ const EditActions = ({ basePath, data, resource }) => (
 );
 
 const ApproveButton = ({ record }) => {
+  console.log(record.id);
   const [approve, { loading }] = useMutation({
     type: "update",
-    resource: "comments",
-    payload: { id: record.id, data: { isApproved: true } },
+    resource: "User",
+    payload: {
+      id: record.id,
+      data: { isAgree: true },
+    },
   });
   return <Button label="Approve" onClick={approve} disabled={loading} />;
 };
@@ -92,6 +96,7 @@ export default (props) => (
       <TextInput label={globalText.text_address} source="address" />
       <TextInput label={globalText.text_secret} source="loginSecret" />
       <BooleanInput label={globalText.text_is_agree} source="isAgree" />
+      <ApproveButton />
     </SimpleForm>
   </Edit>
 );

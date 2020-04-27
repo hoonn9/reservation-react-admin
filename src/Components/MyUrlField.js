@@ -2,6 +2,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import LaunchIcon from "@material-ui/icons/Launch";
+import { globalText } from "../GlobalText";
 
 const useStyles = makeStyles({
   link: {
@@ -17,7 +18,7 @@ const MyUrlField = ({ record = {}, source }) => {
   const classes = useStyles();
   return (
     <a href={record[source]} className={classes.link}>
-      {record[source]}
+      {globalText.text_link}
       <LaunchIcon className={classes.icon} />
     </a>
   );

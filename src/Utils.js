@@ -4,3 +4,11 @@ export const dateOptions = {
   day: "numeric",
   hour: "numeric",
 };
+
+export const getSafe = (params, success, fail) => {
+  try {
+    return eval(success);
+  } catch (e) {
+    return null;
+  }
+};

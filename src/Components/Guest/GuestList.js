@@ -20,10 +20,11 @@ import {
   Filter,
   ShowButton,
   DateField,
+  ReferenceManyField,
 } from "react-admin";
 import { globalText } from "../../GlobalText";
 
-const SimpleUserList = (props) => (
+const SimpleGuestList = (props) => (
   <List {...props}>
     <SimpleList
       primaryText={(record) => record.title}
@@ -33,10 +34,11 @@ const SimpleUserList = (props) => (
   </List>
 );
 
-const UserFilter = (props) => (
+const GuestFilter = (props) => (
   <Filter {...props}>
     <TextInput label="ID" source="id" alwaysOn />
-    <TextInput label={globalText.text_nickname} source="nickname" alwaysOn />
+    <TextInput label={globalText.text_phone_num} source="phoneNum" alwaysOn />
+    <TextInput label={globalText.text_username} source="username" />
     <SelectInput
       label={globalText.text_bio}
       source="bio"
@@ -49,19 +51,23 @@ const UserFilter = (props) => (
 );
 
 export default (props) => (
-  <List {...props} filters={<UserFilter />}>
-    <Datagrid rowClick="edit">
+  <List {...props} filters={<GuestFilter />}>
+    <Datagrid rowClick="show">
       <TextField label={`${globalText.text_member} ID`} source="id" />
-      <TextField label={globalText.text_id} source="userId" />
       <TextField label={globalText.text_username} source="username" />
       <EmailField label={globalText.text_email} source="email" />
       <TextField label={globalText.text_phone_num} source="phoneNum" />
-      <TextField label={globalText.text_nickname} source="nickname" />
       <TextField label={globalText.text_bio} source="bio" />
-      <TextField label={globalText.text_address} source="address" />
+      <ReferenceField
+        label={globalText.text_reserve}
+        source="reservation.id"
+        reference="Reservation"
+      >
+        <TextField source="id" />
+      </ReferenceField>
       <DateField
         showTime
-        label={globalText.text_user_createdAt}
+        label={globalText.text_createdAt}
         source="createdAt"
       />
       <EditButton />
