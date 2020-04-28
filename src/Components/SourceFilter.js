@@ -99,6 +99,55 @@ export default (params, resourceName, fetchType) => {
         price,
       };
     }
+  } else if (resourceName === "Event") {
+    if (fetchType === "UPDATE") {
+      const {
+        data: { id, eventType, title, subTitle, content, period, thumbnail },
+      } = params;
+
+      convertParams.data = {
+        id,
+        eventType,
+        title,
+        subTitle,
+        content,
+        period,
+        thumbnail,
+      };
+    }
+  } else if (resourceName === "Pack") {
+    if (fetchType === "UPDATE") {
+      const {
+        data: {
+          id,
+          room: { id: roomId },
+          name,
+          description,
+          price,
+        },
+      } = params;
+
+      convertParams.data = {
+        id,
+        room: { id: roomId },
+        name,
+        description,
+        price,
+      };
+    }
+  } else if (resourceName === "Popup") {
+    if (fetchType === "UPDATE") {
+      const {
+        data: { id, title, content, url },
+      } = params;
+
+      convertParams.data = {
+        id,
+        title,
+        content,
+        url,
+      };
+    }
   }
   return convertParams;
 };

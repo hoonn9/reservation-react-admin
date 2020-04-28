@@ -152,6 +152,11 @@ const getLanguage = (language = "kr") => {
       text_files: "파일",
       text_url: "경로",
       text_link: "링크",
+      text_popup: "팝업",
+      text_period: "기간",
+      text_subTitle: "부제",
+      text_thumbnail: "썸네일",
+      text_description: "설명",
     };
   } else if (language === "en") {
     return {
