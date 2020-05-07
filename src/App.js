@@ -69,7 +69,7 @@ const enhanceBuildQuery = (buildQuery) => (introspectionResults) => (
 ) => {
   const fragment = get(overridenQueries, `${resourceName}.${fetchType}`);
   const convertParams = SourceFilter(params, resourceName, fetchType);
-  console.log(convertParams);
+  console.log(fetchType);
   return buildQuery(introspectionResults)(
     fetchType,
     resourceName,
@@ -86,7 +86,7 @@ class App extends Component {
 
   componentDidMount() {
     buildPrismaProvider({
-      clientOptions: { uri: process.env.REACT_APP_PROD_URL },
+      clientOptions: { uri: process.env.REACT_APP_END_POINT },
       buildQuery: enhanceBuildQuery(buildQuery),
     }).then((dataProvider) => this.setState({ dataProvider }));
   }
