@@ -1,25 +1,10 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
+import { useMediaQuery } from "@material-ui/core";
 import {
-  List,
-  SimpleList,
-  Datagrid,
-  TextField,
-  ReferenceField,
-  EditButton,
-  ShowButton,
-  Edit,
   SimpleForm,
   TextInput,
-  ReferenceInput,
   SelectInput,
   Create,
-  Filter,
-  FunctionField,
-  Labeled,
-  Show,
-  SimpleShowLayout,
-  RichTextField,
-  DateField,
   SaveButton,
   Toolbar,
   required,
@@ -29,71 +14,41 @@ import {
 } from "react-admin";
 import axios from "axios";
 import { print } from "graphql";
-import gql from "graphql-tag";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState, convertToRaw } from "draft-js";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
+import { CONNECT_FILE } from "../../SharedQueries";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-
-const editorStyle = {
-  padding: "0px 32px",
-  borderRadius: "2px",
-  height: "480px",
-  width: "100%",
-};
-const mobileEditorStyle = {
-  padding: "0px 16px",
-  borderRadius: "2px",
-  height: "300px",
-  width: "100%",
-};
-
-const CONNECT_FILE = gql`
-  mutation createFile(
-    $files: [String!]!
-    $connectId: String!
-    $typeName: String!
-  ) {
-    createFile(files: $files, connectId: $connectId, typeName: $typeName) {
-      id
-    }
-  }
-`;
+import { mobileEditorStyle, editorStyle } from "../../Utils";
 
 const EventCreateToolbar = (props) => {
+  const { editorState, imageArray, ...rest } = props;
   return (
-    <Toolbar {...props}>
+    <Toolbar {...rest}>
       <SaveWithNoteButton
         label="SAVE"
         redirect="show"
-        props={props}
+        {...props}
         submitOnEnter={true}
-        editorState={props.editorState}
-        imageArray={props.imageArray}
       />
     </Toolbar>
   );
 };
 
 const SaveWithNoteButton = (props) => {
+  const { editorState, imageArray, ...rest } = props;
   const [create] = useCreate("Event");
   const redirectTo = useRedirect();
   const notify = useNotify();
   const { basePath } = props;
   const handleSave = (values, redirect) => {
-    console.log(values);
-    console.log(
-      JSON.stringify(convertToRaw(props.editorState.getCurrentContent()))
-    );
     create(
       {
         payload: {
           data: {
             ...values,
-            files: { create: [{ url: props.imageArray[0] }] },
             content: JSON.stringify(
-              convertToRaw(props.editorState.getCurrentContent())
+              convertToRaw(editorState.getCurrentContent())
             ),
           },
         },
@@ -103,11 +58,10 @@ const SaveWithNoteButton = (props) => {
           notify("ra.notification.created", "info", {
             smart_count: 1,
           });
-          console.log(newRecord);
           axios.post(process.env.REACT_APP_PROD_URL, {
             query: print(CONNECT_FILE),
             variables: {
-              files: props.imageArray,
+              files: imageArray,
               connectId: newRecord.id,
               typeName: "event",
             },
@@ -119,10 +73,12 @@ const SaveWithNoteButton = (props) => {
   };
 
   // set onSave props instead of handleSubmitWithRedirect
-  return <SaveButton {...props} onSave={handleSave} />;
+  return <SaveButton {...rest} onSave={handleSave} />;
 };
 
 export default (props) => {
+  const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [imageArray] = useState([]);
 
@@ -185,7 +141,7 @@ export default (props) => {
               defaultSize: { width: "100%", height: "auto" },
             },
           }}
-          editorStyle={editorStyle}
+          editorStyle={isSmall ? mobileEditorStyle : editorStyle}
           editorState={editorState}
           onEditorStateChange={(editorState) => setEditorState(editorState)}
           localization={{

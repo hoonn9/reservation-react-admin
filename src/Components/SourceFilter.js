@@ -50,7 +50,8 @@ export default (params, resourceName, fetchType) => {
     if (fetchType === "CREATE") {
       const {
         data: {
-          board: { id },
+          user: { id: userId },
+          board: { id: boardId },
           title,
           content,
           postType,
@@ -58,7 +59,30 @@ export default (params, resourceName, fetchType) => {
       } = params;
 
       convertParams.data = {
-        board: { id },
+        user: { id: userId },
+        board: { id: boardId },
+        title,
+        content,
+        postType,
+      };
+    } else if (fetchType === "UPDATE") {
+      const {
+        data: {
+          id,
+          user: { id: userId },
+          board: { id: boardId },
+          views,
+          title,
+          content,
+          postType,
+        },
+      } = params;
+
+      convertParams.data = {
+        id,
+        user: { id: userId },
+        board: { id: boardId },
+        views,
         title,
         content,
         postType,
@@ -102,7 +126,7 @@ export default (params, resourceName, fetchType) => {
   } else if (resourceName === "Event") {
     if (fetchType === "UPDATE") {
       const {
-        data: { id, eventType, title, subTitle, content, period, thumbnail },
+        data: { id, eventType, title, subTitle, content, period },
       } = params;
 
       convertParams.data = {
@@ -112,7 +136,6 @@ export default (params, resourceName, fetchType) => {
         subTitle,
         content,
         period,
-        thumbnail,
       };
     }
   } else if (resourceName === "Pack") {

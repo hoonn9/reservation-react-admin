@@ -13,6 +13,7 @@ import {
 } from "react-admin";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
+import ReadEditor from "../ReadEditor";
 
 export default (props) => {
   return (
@@ -27,7 +28,6 @@ export default (props) => {
           <TextField source="id" />
         </ReferenceField>
         <TextField label={globalText.text_title} source="title" />
-        <TextField label={globalText.text_content} source="content" />
         <TextField label={globalText.text_type} source="postType" />
         <TextField label={globalText.text_views} source="views" />
         <ReferenceField
@@ -39,13 +39,15 @@ export default (props) => {
         </ReferenceField>
         <ReferenceManyField
           label={globalText.text_comment}
-          target="comment.id"
+          target="post.id"
           reference="Comment"
         >
           <SingleFieldList>
             <ChipField source="id" />
           </SingleFieldList>
         </ReferenceManyField>
+        <Labeled label={globalText.text_content} />
+        <ReadEditor record={props.record} />
         <DateField
           showTime
           label={globalText.text_createdAt}

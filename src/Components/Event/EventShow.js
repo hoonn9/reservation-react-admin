@@ -18,37 +18,7 @@ import { Editor } from "react-draft-wysiwyg";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { globalText } from "../../GlobalText";
 import EventTitle from "./EventTitle";
-
-const editorStyle = {
-  padding: "0px 32px",
-  borderRadius: "2px",
-  height: "480px",
-  width: "100%",
-};
-const mobileEditorStyle = {
-  padding: "0px 16px",
-  borderRadius: "2px",
-  height: "300px",
-  width: "100%",
-};
-
-const ReadEditor = ({ record }) => {
-  const [editorState, setEditorState] = useState(
-    record
-      ? EditorState.createWithContent(
-          convertFromRaw(JSON.parse(record.content))
-        )
-      : EditorState.createEmpty()
-  );
-  return (
-    <Editor
-      toolbarHidden
-      editorState={editorState}
-      readOnly={true}
-      editorStyle={editorStyle}
-    />
-  );
-};
+import ReadEditor from "../ReadEditor";
 
 export default (props) => {
   return (

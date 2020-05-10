@@ -1,4 +1,4 @@
-import { GET_LIST, GET_ONE, UPDATE } from "react-admin";
+import { GET_LIST, GET_ONE, UPDATE, GET_MANY } from "react-admin";
 import gql from "graphql-tag";
 
 export default {
@@ -21,6 +21,31 @@ export default {
       }
     `,
     [GET_ONE]: gql`
+      fragment post on Post {
+        id
+        title
+        content
+        postType
+        views
+        user {
+          id
+        }
+        board {
+          id
+        }
+        files {
+          id
+          url
+        }
+        comments {
+          id
+          text
+        }
+        createdAt
+        updatedAt
+      }
+    `,
+    [GET_MANY]: gql`
       fragment post on Post {
         id
         title

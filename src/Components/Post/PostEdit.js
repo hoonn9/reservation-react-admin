@@ -61,11 +61,7 @@ export default (props) => (
   <Edit title={<PostTitle />} {...props}>
     <SimpleForm>
       <TextInput disabled label={`${globalText.text_post} ID`} source="id" />
-      <TextInput
-        disabled
-        label={`${globalText.text_member} ID`}
-        source={"user.id"}
-      />
+      <TextInput label={`${globalText.text_member} ID`} source={"user.id"} />
       <ReferenceInput
         label={`${globalText.text_board} ID`}
         source="board.id"
@@ -82,7 +78,7 @@ export default (props) => (
       <NumberInput label={globalText.text_views} source="views" />
       <ReferenceManyField
         label={globalText.text_files}
-        target="file.id"
+        target="post.id"
         reference="File"
       >
         <SingleFieldList>
@@ -91,7 +87,7 @@ export default (props) => (
       </ReferenceManyField>
       <ReferenceManyField
         label={globalText.text_comment}
-        target="comment.id"
+        target="post.id"
         reference="Comment"
       >
         <SingleFieldList>

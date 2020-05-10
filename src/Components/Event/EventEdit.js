@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useMediaQuery } from "@material-ui/core";
 import {
   List,
   SimpleList,
@@ -31,80 +32,176 @@ import {
   SingleFieldList,
   ChipField,
   required,
+  useCreate,
+  useUpdate,
+  useRedirect,
+  useNotify,
+  Toolbar,
 } from "react-admin";
-import styled from "styled-components";
 import { dateOptions } from "../../Utils";
-import { globalText } from "../../GlobalText";
 import EventTitle from "./EventTitle";
+import axios from "axios";
+import { print } from "graphql";
+import { Editor } from "react-draft-wysiwyg";
+import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
+import { globalText } from "../../GlobalText";
+import { CONNECT_FILE } from "../../SharedQueries";
+import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { mobileEditorStyle, editorStyle } from "../../Utils";
 
-const EditActions = ({ basePath, data, resource }) => (
-  <TopToolbar>
-    <ShowButton basePath={basePath} record={data} />
-    {/* Add your custom actions */}
-    <SaveButton
-      onSave={(event) => {
-        console.log("event");
-      }}
-    />
-  </TopToolbar>
-);
+const EventCreateToolbar = (props) => {
+  const { editorState, setEditorState, imageArray, ...rest } = props;
 
-const ApproveButton = ({ record }) => {
-  const [approve, { loading }] = useMutation({
-    type: "update",
-    resource: "comments",
-    payload: { id: record.id, data: { isApproved: true } },
-  });
-  return <Button label="Approve" onClick={approve} disabled={loading} />;
+  useEffect(() => {
+    if (props.record) {
+      console.log("체크");
+      setEditorState(
+        EditorState.createWithContent(
+          convertFromRaw(JSON.parse(props.record.content))
+        )
+      );
+    }
+  }, [props.record]);
+
+  return (
+    <Toolbar {...rest}>
+      <SaveWithNoteButton
+        label="SAVES"
+        redirect="show"
+        submitOnEnter={true}
+        {...props}
+      />
+    </Toolbar>
+  );
 };
 
-export default (props) => (
-  <Edit title={<EventTitle />} {...props}>
-    <SimpleForm>
-      <SelectInput
-        label={`${globalText.text_event} ${globalText.text_type}`}
-        source="eventType"
-        choices={[
-          { id: "숙박", name: "숙박" },
-          { id: "레스토랑", name: "레스토랑" },
-          { id: "레저", name: "레저" },
-        ]}
-        validate={[required()]}
-      />
-      <TextInput
-        label={globalText.text_title}
-        source="title"
-        validate={[required()]}
-      />
-      <TextInput label={globalText.text_subTitle} source="subTitle" />
-      <TextInput
-        label={globalText.text_content}
-        multiline
-        source="content"
-        validate={[required()]}
-      />
-      <TextInput
-        label={globalText.text_period}
-        source="period"
-        validate={[required()]}
-      />
-      <TextInput
-        label={globalText.text_thumbnail}
-        source="thumbnail"
-        validate={[required()]}
-      />
-      <DateTimeInput
-        disabled
-        label={globalText.text_createdAt}
-        options={dateOptions}
-        source="createdAt"
-      />
-      <DateTimeInput
-        disabled
-        label={globalText.text_updatedAt}
-        options={dateOptions}
-        source="updatedAt"
-      />
-    </SimpleForm>
-  </Edit>
-);
+const SaveWithNoteButton = (props) => {
+  const { editorState, setEditorState, imageArray, ...rest } = props;
+  const [update] = useUpdate("Event");
+  const redirectTo = useRedirect();
+  const notify = useNotify();
+  const { basePath } = props;
+  const handleSave = (values, redirect) => {
+    update(
+      {
+        payload: {
+          data: {
+            ...values,
+            content: JSON.stringify(
+              convertToRaw(editorState.getCurrentContent())
+            ),
+          },
+        },
+      },
+      {
+        onSuccess: ({ data: newRecord }) => {
+          notify("ra.notification.created", "info", {
+            smart_count: 1,
+          });
+          axios.post(process.env.REACT_APP_PROD_URL, {
+            query: print(CONNECT_FILE),
+            variables: {
+              files: imageArray,
+              connectId: newRecord.id,
+              typeName: "event",
+            },
+          });
+          redirectTo(redirect, basePath, newRecord.id, newRecord);
+        },
+      }
+    );
+  };
+
+  // set onSave props instead of handleSubmitWithRedirect
+  return <SaveButton {...rest} onSave={handleSave} />;
+};
+
+export default (props) => {
+  const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
+  const [editorState, setEditorState] = useState();
+  const [init, setInit] = useState(false);
+  const [imageArray] = useState([]);
+  console.log(editorState);
+  const uploadCallback = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return new Promise((resolve, reject) => {
+      axios
+        .post(process.env.REACT_APP_PROD_URL + "api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          resolve({ data: { link: res.data.location } });
+          imageArray.push(res.data.location);
+        })
+        .catch((e) => {
+          console.log(e);
+          reject(e.toString());
+        });
+    });
+  };
+
+  return (
+    <Edit title={<EventTitle />} {...props}>
+      <SimpleForm
+        toolbar={
+          <EventCreateToolbar
+            editorState={editorState}
+            setEditorState={setEditorState}
+            imageArray={imageArray}
+          />
+        }
+      >
+        <SelectInput
+          label={`${globalText.text_event} ${globalText.text_type}`}
+          source="eventType"
+          choices={[
+            { id: "숙박", name: "숙박" },
+            { id: "레스토랑", name: "레스토랑" },
+            { id: "레저", name: "레저" },
+          ]}
+          validate={[required()]}
+        />
+        <TextInput
+          label={globalText.text_title}
+          source="title"
+          validate={[required()]}
+        />
+        <TextInput label={globalText.text_subTitle} source="subTitle" />
+        <Editor
+          wrapperClassName="wrapper-class"
+          editorClassName="editor-class"
+          toolbarClassName="toolbar-class"
+          toolbar={{
+            image: {
+              urlEnabled: true,
+              uploadEnabled: true,
+              uploadCallback: uploadCallback,
+              previewImage: true,
+              defaultSize: { width: "100%", height: "auto" },
+            },
+          }}
+          editorStyle={isSmall ? mobileEditorStyle : editorStyle}
+          editorState={editorState}
+          onEditorStateChange={(editorState) => {
+            console.log(
+              JSON.stringify(convertToRaw(editorState.getCurrentContent()))
+            );
+            setEditorState(editorState);
+          }}
+          localization={{
+            locale: "ko",
+          }}
+        />
+        <TextInput
+          label={globalText.text_period}
+          source="period"
+          validate={[required()]}
+        />
+      </SimpleForm>
+    </Edit>
+  );
+};
