@@ -17,7 +17,6 @@ export default (props) => (
         source="content"
         validate={[required()]}
       />
-      <TextInput label={globalText.text_url} source="url" />
     </SimpleForm>
   </Edit>
 );

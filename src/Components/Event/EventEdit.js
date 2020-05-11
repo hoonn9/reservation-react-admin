@@ -1,44 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "@material-ui/core";
 import {
-  List,
-  SimpleList,
-  Datagrid,
-  TextField,
-  ReferenceField,
-  EditButton,
-  ShowButton,
   Edit,
   SimpleForm,
   TextInput,
-  ReferenceInput,
   SelectInput,
-  Create,
-  Filter,
-  FunctionField,
-  Labeled,
-  Show,
-  SimpleShowLayout,
-  RichTextField,
-  NumberInput,
-  DateTimeInput,
-  DateField,
-  useMutation,
-  Button,
-  Form,
-  TopToolbar,
   SaveButton,
-  ReferenceManyField,
-  SingleFieldList,
-  ChipField,
   required,
-  useCreate,
   useUpdate,
   useRedirect,
   useNotify,
   Toolbar,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import EventTitle from "./EventTitle";
 import axios from "axios";
 import { print } from "graphql";
@@ -46,15 +19,14 @@ import { Editor } from "react-draft-wysiwyg";
 import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import { globalText } from "../../GlobalText";
 import { CONNECT_FILE } from "../../SharedQueries";
-import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { mobileEditorStyle, editorStyle } from "../../Utils";
+import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-const EventCreateToolbar = (props) => {
+const EventEditToolbar = (props) => {
   const { editorState, setEditorState, imageArray, ...rest } = props;
 
   useEffect(() => {
     if (props.record) {
-      console.log("체크");
       setEditorState(
         EditorState.createWithContent(
           convertFromRaw(JSON.parse(props.record.content))
@@ -66,7 +38,7 @@ const EventCreateToolbar = (props) => {
   return (
     <Toolbar {...rest}>
       <SaveWithNoteButton
-        label="SAVES"
+        label="SAVE"
         redirect="show"
         submitOnEnter={true}
         {...props}
@@ -118,11 +90,9 @@ const SaveWithNoteButton = (props) => {
 
 export default (props) => {
   const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
-
-  const [editorState, setEditorState] = useState();
-  const [init, setInit] = useState(false);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [imageArray] = useState([]);
-  console.log(editorState);
+
   const uploadCallback = (file) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -143,12 +113,12 @@ export default (props) => {
         });
     });
   };
-
+  const onEditorStateChange = (editorState) => setEditorState(editorState);
   return (
     <Edit title={<EventTitle />} {...props}>
       <SimpleForm
         toolbar={
-          <EventCreateToolbar
+          <EventEditToolbar
             editorState={editorState}
             setEditorState={setEditorState}
             imageArray={imageArray}
@@ -186,12 +156,7 @@ export default (props) => {
           }}
           editorStyle={isSmall ? mobileEditorStyle : editorStyle}
           editorState={editorState}
-          onEditorStateChange={(editorState) => {
-            console.log(
-              JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-            );
-            setEditorState(editorState);
-          }}
+          onEditorStateChange={onEditorStateChange}
           localization={{
             locale: "ko",
           }}

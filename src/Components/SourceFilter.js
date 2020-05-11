@@ -1,5 +1,6 @@
 import React from "react";
 import { getSafe } from "../Utils";
+import axios from "axios";
 
 export default (params, resourceName, fetchType) => {
   const convertParams = params;
@@ -29,22 +30,119 @@ export default (params, resourceName, fetchType) => {
         isAgree,
       };
     }
-  } else if (resourceName === "Reservation") {
+  } else if (resourceName === "NoUser") {
     if (fetchType === "UPDATE") {
       const {
-        data: { id, checkIn, checkOut, count, needs, adult, child, price },
+        data: { id, username, bio, phoneNum, email, loginSecret },
       } = params;
 
       convertParams.data = {
         id,
-        checkIn,
-        checkOut,
+        username,
+        bio,
+        phoneNum,
+        email,
+        loginSecret,
+      };
+    }
+  } else if (resourceName === "Guest") {
+    if (fetchType === "UPDATE") {
+      const {
+        data: { id, username, bio, phoneNum, email },
+      } = params;
+
+      convertParams.data = {
+        id,
+        username,
+        bio,
+        phoneNum,
+        email,
+      };
+    }
+  } else if (resourceName === "Reservation") {
+    if (fetchType === "CREATE") {
+      const userId = getSafe(params, "params.data.user.id");
+      const noUserId = getSafe(params, "params.data.noUser.id");
+      const packId = getSafe(params, "params.data.pack.id");
+      const {
+        data: {
+          guest: { id: guestId },
+          room: { id: roomId },
+          count,
+          adult,
+          child,
+          needs,
+          price,
+          checkIn,
+          checkOut,
+        },
+      } = params;
+
+      convertParams.data = {
+        user: { id: userId },
+        noUser: { id: noUserId },
+        pack: { id: packId },
+        guest: { id: guestId },
+        room: { id: roomId },
         count,
-        needs,
         adult,
         child,
+        needs,
         price,
+        checkIn: checkIn.toISOString(),
+        checkOut: checkOut.toISOString(),
       };
+
+      if (!userId) {
+        delete convertParams.data["user"];
+      }
+      if (!noUserId) {
+        delete convertParams.data["noUser"];
+      }
+      if (!packId) {
+        delete convertParams.data["pack"];
+      }
+    } else if (fetchType === "UPDATE") {
+      const packId = getSafe(params, "params.data.pack.id");
+      const {
+        data: {
+          id,
+          room: { id: roomId },
+          count,
+          adult,
+          child,
+          needs,
+          price,
+          checkIn,
+          checkOut,
+        },
+      } = params;
+      if (packId) {
+        convertParams.data = {
+          id,
+          room: { id: roomId },
+          pack: { id: packId },
+          count,
+          adult,
+          child,
+          needs,
+          price,
+          checkIn: checkIn.toISOString(),
+          checkOut: checkOut.toISOString(),
+        };
+      } else {
+        convertParams.data = {
+          id,
+          room: { id: roomId },
+          count,
+          adult,
+          child,
+          needs,
+          price,
+          checkIn: checkIn.toISOString(),
+          checkOut: checkOut.toISOString(),
+        };
+      }
     }
   } else if (resourceName === "Post") {
     if (fetchType === "CREATE") {
@@ -159,7 +257,18 @@ export default (params, resourceName, fetchType) => {
       };
     }
   } else if (resourceName === "Popup") {
-    if (fetchType === "UPDATE") {
+    if (fetchType === "CREATE") {
+      console.log(params);
+
+      const {
+        data: { title, content },
+      } = params;
+
+      convertParams.data = {
+        title,
+        content,
+      };
+    } else if (fetchType === "UPDATE") {
       const {
         data: { id, title, content, url },
       } = params;

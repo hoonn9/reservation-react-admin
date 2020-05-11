@@ -157,6 +157,8 @@ const getLanguage = (language = "kr") => {
       text_subTitle: "부제",
       text_thumbnail: "썸네일",
       text_description: "설명",
+      text_payment: "결제",
+      text_time: "시간",
     };
   } else if (language === "en") {
     return {

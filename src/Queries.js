@@ -1,4 +1,4 @@
-import { GET_LIST, GET_ONE, UPDATE, GET_MANY } from "react-admin";
+import { GET_LIST, GET_ONE, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import gql from "graphql-tag";
 
 export default {
@@ -7,6 +7,7 @@ export default {
       fragment post on Post {
         id
         title
+        content
         postType
         views
         user {
@@ -46,6 +47,31 @@ export default {
       }
     `,
     [GET_MANY]: gql`
+      fragment post on Post {
+        id
+        title
+        content
+        postType
+        views
+        user {
+          id
+        }
+        board {
+          id
+        }
+        files {
+          id
+          url
+        }
+        comments {
+          id
+          text
+        }
+        createdAt
+        updatedAt
+      }
+    `,
+    [GET_MANY_REFERENCE]: gql`
       fragment post on Post {
         id
         title
@@ -206,6 +232,19 @@ export default {
         phoneNum
         bio
         reservation {
+          id
+        }
+        createdAt
+      }
+    `,
+  },
+  Popup: {
+    [GET_LIST]: gql`
+      fragment popup on Popup {
+        id
+        title
+        content
+        files {
           id
         }
         createdAt

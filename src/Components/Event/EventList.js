@@ -4,27 +4,24 @@ import {
   List,
   Datagrid,
   TextField,
-  ReferenceField,
   EditButton,
   ShowButton,
   DateField,
   SimpleList,
   Filter,
   TextInput,
-  ReferenceInput,
   SelectInput,
 } from "react-admin";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
-import MyUrlField from "../MyUrlField";
 import EventTitle from "./EventTitle";
 
 const SimpleCustomList = (props) => (
   <List {...props}>
     <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
+      primaryText={(record) => record.id}
+      secondaryText={(record) => record.eventType}
+      tertiaryText={(record) => record.title}
     />
   </List>
 );
@@ -62,7 +59,6 @@ export default (props) => {
           <TextField label={globalText.text_title} source="title" />
           <TextField label={globalText.text_subTitle} source="subTitle" />
           <TextField label={globalText.text_period} source="period" />
-          <MyUrlField source="thumbnail" />
           <DateField
             label={globalText.text_createdAt}
             options={dateOptions}

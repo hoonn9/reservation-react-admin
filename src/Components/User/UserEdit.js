@@ -1,37 +1,14 @@
 import React from "react";
 import {
-  List,
-  SimpleList,
-  Datagrid,
-  TextField,
-  ReferenceField,
-  EditButton,
-  ShowButton,
   Edit,
   SimpleForm,
   TextInput,
   ReferenceInput,
   SelectInput,
-  Create,
-  Filter,
-  FunctionField,
-  Labeled,
-  Show,
-  SimpleShowLayout,
-  RichTextField,
-  NumberInput,
-  DateTimeInput,
-  DateField,
   BooleanInput,
-  useMutation,
-  Button,
-  Form,
-  TopToolbar,
-  SaveButton,
+  required,
 } from "react-admin";
-import styled from "styled-components";
 import UserTitle from "./UserTitle";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
 const UserInput = ({ props, record }) => {
@@ -58,45 +35,58 @@ const UserInput = ({ props, record }) => {
   }
 };
 
-const EditActions = ({ basePath, data, resource }) => (
-  <TopToolbar>
-    <ShowButton basePath={basePath} record={data} />
-    {/* Add your custom actions */}
-    <SaveButton
-      onSave={(event) => {
-        console.log("event");
-      }}
-    />
-  </TopToolbar>
-);
-
-const ApproveButton = ({ record }) => {
-  console.log(record.id);
-  const [approve, { loading }] = useMutation({
-    type: "update",
-    resource: "User",
-    payload: {
-      id: record.id,
-      data: { isAgree: true },
-    },
-  });
-  return <Button label="Approve" onClick={approve} disabled={loading} />;
-};
-
 export default (props) => (
   <Edit title={<UserTitle />} {...props}>
     <SimpleForm>
-      <TextInput disabled label={`${globalText.text_member} ID`} source="id" />
-      <TextInput disabled label={globalText.text_id} source="userId" />
-      <TextInput disabled label={globalText.text_email} source="email" />
-      <TextInput label={globalText.text_username} source="username" />
-      <TextInput label={globalText.text_nickname} source="nickname" />
-      <TextInput label={globalText.text_phone_num} source="phoneNum" />
-      <TextInput label={globalText.text_bio} source="bio" />
+      <TextInput
+        disabled
+        label={`${globalText.text_member} ID`}
+        source="id"
+        validate={[required()]}
+      />
+      <TextInput
+        disabled
+        label={globalText.text_id}
+        source="userId"
+        validate={[required()]}
+      />
+      <TextInput
+        disabled
+        label={globalText.text_email}
+        source="email"
+        validate={[required()]}
+      />
+      <TextInput
+        label={globalText.text_username}
+        source="username"
+        validate={[required()]}
+      />
+      <TextInput
+        label={globalText.text_nickname}
+        source="nickname"
+        validate={[required()]}
+      />
+      <TextInput
+        label={globalText.text_phone_num}
+        source="phoneNum"
+        validate={[required()]}
+      />
+      <SelectInput
+        label={globalText.text_bio}
+        source="bio"
+        choices={[
+          { id: "남", name: "남" },
+          { id: "여", name: "여" },
+        ]}
+        validate={[required()]}
+      />
       <TextInput label={globalText.text_address} source="address" />
       <TextInput label={globalText.text_secret} source="loginSecret" />
-      <BooleanInput label={globalText.text_is_agree} source="isAgree" />
-      <ApproveButton />
+      <BooleanInput
+        label={globalText.text_is_agree}
+        source="isAgree"
+        validate={[required()]}
+      />
     </SimpleForm>
   </Edit>
 );

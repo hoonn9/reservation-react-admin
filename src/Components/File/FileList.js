@@ -84,6 +84,14 @@ export default (props) => {
           >
             <TextField source="id" />
           </ReferenceField>
+
+          <ReferenceField
+            label={globalText.text_popup}
+            source="popup.id"
+            reference="Popup"
+          >
+            <TextField source="id" />
+          </ReferenceField>
           <DateField
             label={globalText.text_createdAt}
             options={dateOptions}

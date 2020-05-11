@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   TextField,
-  ReferenceField,
   Labeled,
   Show,
   SimpleShowLayout,
-  RichTextField,
   DateField,
   ReferenceManyField,
   SingleFieldList,
   ChipField,
-  UrlField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
-import { EditorState, convertFromRaw } from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { globalText } from "../../GlobalText";
 import EventTitle from "./EventTitle";
@@ -32,7 +26,6 @@ export default (props) => {
         <TextField label={globalText.text_title} source="title" />
         <TextField label={globalText.text_subTitle} source="subTitle" />
         <TextField label={globalText.text_period} source="period" />
-        <UrlField source="thumbnail" />
         <ReferenceManyField
           label={globalText.text_comment}
           target="event.id"
@@ -51,7 +44,7 @@ export default (props) => {
             <ChipField source="id" />
           </SingleFieldList>
         </ReferenceManyField>
-        <Labeled label="내용" />
+        <Labeled label={globalText.text_content} />
         <ReadEditor record={props.record} />
         <DateField
           showTime

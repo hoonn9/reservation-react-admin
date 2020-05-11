@@ -1,5 +1,5 @@
 import React from "react";
 
 export default ({ record }) => {
-  return <span>Guest {record ? `"${record.title}"` : ""}</span>;
+  return <span>Guest {record ? `"${record.id}"` : ""}</span>;
 };

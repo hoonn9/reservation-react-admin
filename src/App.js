@@ -21,6 +21,7 @@ import overridenQueries from "./Queries";
 import ReservationList from "./Components/Reservation/ReservationList";
 import ReservationShow from "./Components/Reservation/ReservationShow";
 import ReservationEdit from "./Components/Reservation/ReservationEdit";
+import ReservationCreate from "./Components/Reservation/ReservationCreate";
 import UserList from "./Components/User/UserList";
 import UserShow from "./Components/User/UserShow";
 import UserEdit from "./Components/User/UserEdit";
@@ -127,6 +128,7 @@ class App extends Component {
           show={ReservationShow}
           list={ReservationList}
           edit={ReservationEdit}
+          create={ReservationCreate}
         />
         <Resource
           name="Guest"

@@ -2,16 +2,13 @@ import React from "react";
 import {
   TextField,
   ReferenceField,
-  Labeled,
   Show,
   SimpleShowLayout,
-  RichTextField,
   DateField,
   ReferenceManyField,
   SingleFieldList,
   ChipField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
 const UserField = ({ props, record }) => {

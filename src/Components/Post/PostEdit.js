@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useMediaQuery } from "@material-ui/core";
 import {
   List,
   SimpleList,
@@ -30,82 +31,198 @@ import {
   ReferenceManyField,
   SingleFieldList,
   ChipField,
+  useUpdate,
+  useRedirect,
+  useNotify,
+  Toolbar,
 } from "react-admin";
-import styled from "styled-components";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 import PostTitle from "./PostTitle";
+import axios from "axios";
+import { print } from "graphql";
+import { Editor } from "react-draft-wysiwyg";
+import {
+  EditorState,
+  ContentState,
+  convertToRaw,
+  convertFromRaw,
+} from "draft-js";
+import { CONNECT_FILE } from "../../SharedQueries";
+import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { mobileEditorStyle, editorStyle } from "../../Utils";
 
-const EditActions = ({ basePath, data, resource }) => (
-  <TopToolbar>
-    <ShowButton basePath={basePath} record={data} />
-    {/* Add your custom actions */}
-    <SaveButton
-      onSave={(event) => {
-        console.log("event");
-      }}
-    />
-  </TopToolbar>
-);
+const PostEditToolbar = (props) => {
+  const { editorState, setEditorState, imageArray, ...rest } = props;
 
-const ApproveButton = ({ record }) => {
-  const [approve, { loading }] = useMutation({
-    type: "update",
-    resource: "comments",
-    payload: { id: record.id, data: { isApproved: true } },
-  });
-  return <Button label="Approve" onClick={approve} disabled={loading} />;
+  useEffect(() => {
+    if (props.record) {
+      setEditorState(
+        EditorState.createWithContent(
+          convertFromRaw(JSON.parse(props.record.content))
+        )
+      );
+    }
+  }, [props.record]);
+
+  return (
+    <Toolbar {...rest}>
+      <SaveWithNoteButton
+        label="SAVE"
+        redirect="show"
+        submitOnEnter={true}
+        {...props}
+      />
+    </Toolbar>
+  );
 };
 
-export default (props) => (
-  <Edit title={<PostTitle />} {...props}>
-    <SimpleForm>
-      <TextInput disabled label={`${globalText.text_post} ID`} source="id" />
-      <TextInput label={`${globalText.text_member} ID`} source={"user.id"} />
-      <ReferenceInput
-        label={`${globalText.text_board} ID`}
-        source="board.id"
-        reference="Board"
+const SaveWithNoteButton = (props) => {
+  const { editorState, setEditorState, imageArray, ...rest } = props;
+  const [update] = useUpdate("Post");
+  const redirectTo = useRedirect();
+  const notify = useNotify();
+  const { basePath } = props;
+  const handleSave = (values, redirect) => {
+    update(
+      {
+        payload: {
+          data: {
+            ...values,
+            content: JSON.stringify(
+              convertToRaw(editorState.getCurrentContent())
+            ),
+          },
+        },
+      },
+      {
+        onSuccess: ({ data: newRecord }) => {
+          notify("ra.notification.created", "info", {
+            smart_count: 1,
+          });
+          axios.post(process.env.REACT_APP_PROD_URL, {
+            query: print(CONNECT_FILE),
+            variables: {
+              files: imageArray,
+              connectId: newRecord.id,
+              typeName: "event",
+            },
+          });
+          redirectTo(redirect, basePath, newRecord.id, newRecord);
+        },
+      }
+    );
+  };
+
+  // set onSave props instead of handleSubmitWithRedirect
+  return <SaveButton {...rest} onSave={handleSave} />;
+};
+
+export default (props) => {
+  const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [imageArray] = useState([]);
+
+  const uploadCallback = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return new Promise((resolve, reject) => {
+      axios
+        .post(process.env.REACT_APP_PROD_URL + "api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          resolve({ data: { link: res.data.location } });
+          imageArray.push(res.data.location);
+        })
+        .catch((e) => {
+          console.log(e);
+          reject(e.toString());
+        });
+    });
+  };
+  const onEditorStateChange = (editorState) => setEditorState(editorState);
+
+  return (
+    <Edit title={<PostTitle />} {...props}>
+      <SimpleForm
+        toolbar={
+          <PostEditToolbar
+            editorState={editorState}
+            setEditorState={setEditorState}
+            imageArray={imageArray}
+          />
+        }
       >
-        <SelectInput optionText="name" />
-      </ReferenceInput>
-      <TextInput label={globalText.text_title} source="title" />
-      <TextInput multiline label={globalText.text_content} source="content" />
-      <TextInput
-        label={`${globalText.text_post} ${globalText.text_type}`}
-        source="postType"
-      />
-      <NumberInput label={globalText.text_views} source="views" />
-      <ReferenceManyField
-        label={globalText.text_files}
-        target="post.id"
-        reference="File"
-      >
-        <SingleFieldList>
-          <ChipField source="url" />
-        </SingleFieldList>
-      </ReferenceManyField>
-      <ReferenceManyField
-        label={globalText.text_comment}
-        target="post.id"
-        reference="Comment"
-      >
-        <SingleFieldList>
-          <ChipField source="text" />
-        </SingleFieldList>
-      </ReferenceManyField>
-      <DateTimeInput
-        disabled
-        label={globalText.text_createdAt}
-        options={dateOptions}
-        source="createdAt"
-      />
-      <DateTimeInput
-        disabled
-        label={globalText.text_updatedAt}
-        options={dateOptions}
-        source="updatedAt"
-      />
-    </SimpleForm>
-  </Edit>
-);
+        <TextInput disabled label={`${globalText.text_post} ID`} source="id" />
+        <TextInput label={`${globalText.text_member} ID`} source={"user.id"} />
+        <ReferenceInput
+          label={`${globalText.text_board} ID`}
+          source="board.id"
+          reference="Board"
+        >
+          <SelectInput optionText="name" />
+        </ReferenceInput>
+        <TextInput
+          label={`${globalText.text_post} ${globalText.text_type}`}
+          source="postType"
+        />
+        <TextInput label={globalText.text_title} source="title" />
+        <Editor
+          wrapperClassName="wrapper-class"
+          editorClassName="editor-class"
+          toolbarClassName="toolbar-class"
+          toolbar={{
+            image: {
+              urlEnabled: true,
+              uploadEnabled: true,
+              uploadCallback: uploadCallback,
+              previewImage: true,
+              defaultSize: { width: "100%", height: "auto" },
+            },
+          }}
+          editorStyle={isSmall ? mobileEditorStyle : editorStyle}
+          editorState={editorState}
+          onEditorStateChange={onEditorStateChange}
+          localization={{
+            locale: "ko",
+          }}
+        />
+
+        <NumberInput label={globalText.text_views} source="views" />
+        <ReferenceManyField
+          label={globalText.text_files}
+          target="post.id"
+          reference="File"
+        >
+          <SingleFieldList>
+            <ChipField source="url" />
+          </SingleFieldList>
+        </ReferenceManyField>
+        <ReferenceManyField
+          label={globalText.text_comment}
+          target="post.id"
+          reference="Comment"
+        >
+          <SingleFieldList>
+            <ChipField source="text" />
+          </SingleFieldList>
+        </ReferenceManyField>
+        <DateTimeInput
+          disabled
+          label={globalText.text_createdAt}
+          options={dateOptions}
+          source="createdAt"
+        />
+        <DateTimeInput
+          disabled
+          label={globalText.text_updatedAt}
+          options={dateOptions}
+          source="updatedAt"
+        />
+      </SimpleForm>
+    </Edit>
+  );
+};

@@ -5,33 +5,26 @@ import {
   Datagrid,
   TextField,
   EmailField,
-  ReferenceField,
   SingleFieldList,
   ChipField,
-  ReferenceArrayField,
-  ArrayField,
   EditButton,
-  Edit,
-  SimpleForm,
   TextInput,
-  ReferenceInput,
   SelectInput,
-  Create,
   Filter,
   ShowButton,
   DateField,
   ReferenceManyField,
 } from "react-admin";
+import { useMediaQuery } from "@material-ui/core";
 import { globalText } from "../../GlobalText";
 
 const SimpleNoUserList = (props) => (
-  <List {...props}>
-    <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-    />
-  </List>
+  <SimpleList
+    {...props}
+    primaryText={(record) => record.id}
+    secondaryText={(record) => record.phoneNum}
+    tertiaryText={(record) => record.username}
+  />
 );
 
 const NoUserFilter = (props) => (
@@ -50,30 +43,37 @@ const NoUserFilter = (props) => (
   </Filter>
 );
 
-export default (props) => (
-  <List {...props} filters={<NoUserFilter />}>
-    <Datagrid rowClick="show">
-      <TextField label={`${globalText.text_member} ID`} source="id" />
-      <TextField label={globalText.text_username} source="username" />
-      <EmailField label={globalText.text_email} source="email" />
-      <TextField label={globalText.text_phone_num} source="phoneNum" />
-      <TextField label={globalText.text_bio} source="bio" />
-      <ReferenceManyField
-        label={globalText.text_reserve}
-        target="noUser.id"
-        reference="Reservation"
-      >
-        <SingleFieldList>
-          <ChipField source="id" />
-        </SingleFieldList>
-      </ReferenceManyField>
-      <DateField
-        showTime
-        label={globalText.text_createdAt}
-        source="createdAt"
-      />
-      <EditButton />
-      <ShowButton />
-    </Datagrid>
-  </List>
-);
+export default (props) => {
+  const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  return (
+    <List {...props} filters={<NoUserFilter />}>
+      {isSmall ? (
+        <SimpleNoUserList {...props} />
+      ) : (
+        <Datagrid rowClick="show">
+          <TextField label={`${globalText.text_member} ID`} source="id" />
+          <TextField label={globalText.text_username} source="username" />
+          <EmailField label={globalText.text_email} source="email" />
+          <TextField label={globalText.text_phone_num} source="phoneNum" />
+          <TextField label={globalText.text_bio} source="bio" />
+          <ReferenceManyField
+            label={globalText.text_reserve}
+            target="noUser.id"
+            reference="Reservation"
+          >
+            <SingleFieldList>
+              <ChipField source="id" />
+            </SingleFieldList>
+          </ReferenceManyField>
+          <DateField
+            showTime
+            label={globalText.text_createdAt}
+            source="createdAt"
+          />
+          <EditButton />
+          <ShowButton />
+        </Datagrid>
+      )}
+    </List>
+  );
+};

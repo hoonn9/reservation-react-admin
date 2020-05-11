@@ -8,7 +8,6 @@ import {
   RichTextField,
   DateField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
 const UserField = ({ props, record }) => {
@@ -16,29 +15,39 @@ const UserField = ({ props, record }) => {
     return record.user ? (
       <Show {...props}>
         <SimpleShowLayout>
-          <ReferenceField label="회원 ID" source="user.id" reference="User">
+          <ReferenceField
+            label={`${globalText.text_member} ID`}
+            source="user.id"
+            reference="User"
+          >
             <TextField source="id" />
           </ReferenceField>
-          <TextField label="성명" source="user.username" />
-          <TextField label="이메일" source="user.email" />
-          <TextField label="성별" source="user.bio" />
-          <TextField label="휴대폰 번호" source="user.phoneNum" />
+          <TextField label={globalText.text_username} source="user.username" />
+          <TextField label={globalText.text_email} source="user.email" />
+          <TextField label={globalText.text_bio} source="user.bio" />
+          <TextField label={globalText.text_phone_num} source="user.phoneNum" />
         </SimpleShowLayout>
       </Show>
     ) : (
       <Show {...props}>
         <SimpleShowLayout>
           <ReferenceField
-            label="비회원 ID"
+            label={`${globalText.text_no_member} ID`}
             source="noUser.id"
             reference="NoUser"
           >
             <TextField source="id" />
           </ReferenceField>
-          <TextField label="성명" source="noUser.username" />
-          <TextField label="이메일" source="noUser.email" />
-          <TextField label="성별" source="noUser.bio" />
-          <TextField label="휴대폰 번호" source="noUser.phoneNum" />
+          <TextField
+            label={globalText.text_username}
+            source="noUser.username"
+          />
+          <TextField label={globalText.text_email} source="noUser.email" />
+          <TextField label={globalText.text_bio} source="noUser.bio" />
+          <TextField
+            label={globalText.text_phone_num}
+            source="noUser.phoneNum"
+          />
         </SimpleShowLayout>
       </Show>
     );
@@ -50,13 +59,20 @@ const GuestField = ({ props, record }) => {
     return (
       <Show {...props}>
         <SimpleShowLayout>
-          <ReferenceField label="게스트 ID" source="guest.id" reference="Guest">
+          <ReferenceField
+            label={`${globalText.text_guest} ID`}
+            source="guest.id"
+            reference="Guest"
+          >
             <TextField source="id" />
           </ReferenceField>
-          <TextField label="성명" source="guest.username" />
-          <TextField label="이메일" source="guest.email" />
-          <TextField label="성별" source="guest.bio" />
-          <TextField label="휴대폰 번호" source="guest.phoneNum" />
+          <TextField label={globalText.text_username} source="guest.username" />
+          <TextField label={globalText.text_email} source="guest.email" />
+          <TextField label={globalText.text_bio} source="guest.bio" />
+          <TextField
+            label={globalText.text_phone_num}
+            source="guest.phoneNum"
+          />
         </SimpleShowLayout>
       </Show>
     );
@@ -67,21 +83,39 @@ export default (props) => {
   return (
     <Show {...props}>
       <SimpleShowLayout>
-        <TextField label="예약 ID" source="id" />
-        <Labeled label="예약자">
+        <TextField label={`${globalText.text_reserve} ID`} source="id" />
+        <Labeled label={globalText.text_reserve_user}>
           <UserField props={props} record={props.record} />
         </Labeled>
-        <Labeled label="게스트">
+        <Labeled label={globalText.text_guest}>
           <GuestField props={props} record={props.record} />
         </Labeled>
-        <TextField label="객실 수" source="count" />
-        <TextField label="성인" source="adult" />
-        <TextField label="소아" source="child" />
-        <RichTextField label="요구사항" source="needs" />
-        <RichTextField label="결제 금액" source="price" />
-        <DateField showTime label="체크인 예정" source="checkIn" />
-        <DateField showTime label="체크아웃 예정" source="checkOut" />
-        <DateField showTime label="예약 시간" source="createdAt" />
+        <TextField
+          label={`${globalText.text_room} ${globalText.text_number}`}
+          source="count"
+        />
+        <TextField label={globalText.text_adult} source="adult" />
+        <TextField label={globalText.text_child} source="child" />
+        <RichTextField label={globalText.text_option_request} source="needs" />
+        <RichTextField
+          label={`${globalText.text_payment} ${globalText.text_price}`}
+          source="price"
+        />
+        <DateField
+          showTime
+          label={globalText.text_option_expect_check_in}
+          source="checkIn"
+        />
+        <DateField
+          showTime
+          label={globalText.text_option_expect_check_out}
+          source="checkOut"
+        />
+        <DateField
+          showTime
+          label={`${globalText.text_reserve} ${globalText.text_time}`}
+          source="createdAt"
+        />
       </SimpleShowLayout>
     </Show>
   );
