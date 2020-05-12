@@ -4,47 +4,35 @@ import {
   List,
   Datagrid,
   TextField,
-  ReferenceField,
   EditButton,
   ShowButton,
   DateField,
   SimpleList,
-  Filter,
-  TextInput,
-  ReferenceInput,
-  SelectInput,
   ReferenceManyField,
   SingleFieldList,
   ChipField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
-
-const SimpleRoomList = (props) => (
-  <List {...props}>
-    <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-    />
-  </List>
-);
 
 export default (props) => {
   const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   return (
     <List {...props}>
       {isSmall ? (
-        <SimpleRoomList {...props} />
+        <SimpleList
+          primaryText={(record) => record.name}
+          secondaryText={(record) => record.name}
+          tertiaryText={(record) => record.price}
+        />
       ) : (
         <Datagrid>
           <TextField label={`${globalText.text_room} ID`} source="id" />
           <TextField label={globalText.text_room} source="name" />
-          <TextField label={globalText.text_count} source="count" />
+          <TextField label={globalText.text_number} source="count" />
           <TextField label={globalText.text_price} source="price" />
 
           <ReferenceManyField
-            label={`${globalText.text_room} ${globalText.text_number}`}
+            label={globalText.text_reserve}
             target="room.id"
             reference="Reservation"
           >

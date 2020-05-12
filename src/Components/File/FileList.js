@@ -13,27 +13,15 @@ import {
   TextInput,
   ReferenceInput,
   SelectInput,
-  Labeled,
 } from "react-admin";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 import MyUrlField from "../MyUrlField";
 
-const SimpleFileList = (props) => (
-  <List {...props}>
-    <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-    />
-  </List>
-);
-
 const FileFilter = (props) => (
   <Filter {...props}>
     <TextInput label={`${globalText.text_post} ID`} source="post.id" alwaysOn />
     <ReferenceInput
-      alwaysOn
       label={globalText.text_room}
       source="room.id"
       reference="Room"
@@ -49,6 +37,14 @@ const FileFilter = (props) => (
     >
       <SelectInput optionText="title" />
     </ReferenceInput>
+    <ReferenceInput
+      label={globalText.text_popup}
+      source="popup.id"
+      reference="Popup"
+      allowEmpty
+    >
+      <SelectInput optionText="id" />
+    </ReferenceInput>
   </Filter>
 );
 
@@ -57,7 +53,13 @@ export default (props) => {
   return (
     <List {...props} filters={<FileFilter />}>
       {isSmall ? (
-        <SimpleFileList {...props} />
+        <SimpleList
+          primaryText={(record) => record.id}
+          secondaryText={(record) => record.url}
+          tertiaryText={(record) =>
+            new Date(record.createdAt).toLocaleDateString()
+          }
+        />
       ) : (
         <Datagrid>
           <TextField label={`${globalText.text_file} ID`} source="id" />

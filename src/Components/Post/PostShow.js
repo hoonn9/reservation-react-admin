@@ -5,13 +5,11 @@ import {
   Labeled,
   Show,
   SimpleShowLayout,
-  RichTextField,
   DateField,
   ReferenceManyField,
   SingleFieldList,
   ChipField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 import ReadEditor from "../ReadEditor";
 
@@ -37,6 +35,9 @@ export default (props) => {
         >
           <TextField source="name" />
         </ReferenceField>
+
+        <Labeled label={globalText.text_content} />
+        <ReadEditor record={props.record} />
         <ReferenceManyField
           label={globalText.text_comment}
           target="post.id"
@@ -46,8 +47,15 @@ export default (props) => {
             <ChipField source="id" />
           </SingleFieldList>
         </ReferenceManyField>
-        <Labeled label={globalText.text_content} />
-        <ReadEditor record={props.record} />
+        <ReferenceManyField
+          label={globalText.text_file}
+          target="post.id"
+          reference="File"
+        >
+          <SingleFieldList>
+            <ChipField source="url" />
+          </SingleFieldList>
+        </ReferenceManyField>
         <DateField
           showTime
           label={globalText.text_createdAt}

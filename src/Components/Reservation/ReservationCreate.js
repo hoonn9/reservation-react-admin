@@ -1,43 +1,17 @@
-import React, { useState } from "react";
-import { useMediaQuery } from "@material-ui/core";
+import React from "react";
 import {
-  List,
-  SimpleList,
-  Datagrid,
-  TextField,
-  ReferenceField,
-  EditButton,
-  ShowButton,
-  Edit,
   SimpleForm,
   TextInput,
   ReferenceInput,
   SelectInput,
   Create,
-  Filter,
-  FunctionField,
   Labeled,
-  Show,
-  SimpleShowLayout,
-  RichTextField,
-  DateField,
-  Toolbar,
   required,
-  useCreate,
-  useRedirect,
-  useNotify,
-  SaveButton,
   NumberInput,
   DateTimeInput,
 } from "react-admin";
-import axios from "axios";
-import { print } from "graphql";
-import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from "draft-js";
 import { globalText } from "../../GlobalText";
-import { CONNECT_FILE } from "../../SharedQueries";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { mobileEditorStyle, editorStyle } from "../../Utils";
 
 export default (props) => {
   return (

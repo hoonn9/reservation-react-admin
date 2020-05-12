@@ -11,57 +11,36 @@ import {
   SimpleList,
   Filter,
   TextInput,
-  ReferenceInput,
-  SelectInput,
-  Labeled,
 } from "react-admin";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
-import MyUrlField from "../MyUrlField";
 
-const SimpleFileList = (props) => (
-  <List {...props}>
-    <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-    />
-  </List>
-);
-
-const FileFilter = (props) => (
+const CommentFilter = (props) => (
   <Filter {...props}>
     <TextInput label={`${globalText.text_post} ID`} source="post.id" alwaysOn />
-    <ReferenceInput
+    <TextInput
+      label={`${globalText.text_member} ID`}
+      source="user.id"
       alwaysOn
-      label={globalText.text_room}
-      source="room.id"
-      reference="Room"
-      allowEmpty
-    >
-      <SelectInput optionText="name" />
-    </ReferenceInput>
-    <ReferenceInput
-      label={globalText.text_event}
-      source="event.id"
-      reference="Event"
-      allowEmpty
-    >
-      <SelectInput optionText="title" />
-    </ReferenceInput>
+    />
   </Filter>
 );
 
 export default (props) => {
   const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   return (
-    <List {...props} filters={<FileFilter />}>
+    <List {...props} filters={<CommentFilter />}>
       {isSmall ? (
-        <SimpleFileList {...props} />
+        <SimpleList
+          primaryText={(record) => record.text}
+          secondaryText={(record) =>
+            new Date(record.createdAt).toLocaleDateString()
+          }
+          tertiaryText={(record) => record.user.id}
+        />
       ) : (
         <Datagrid>
-          <TextField label={`${globalText.text_file} ID`} source="id" />
-          <MyUrlField {...props} source="url" />
+          <TextField label={`${globalText.text_comment} ID`} source="id" />
           <ReferenceField
             label={globalText.text_post}
             source="post.id"
@@ -70,19 +49,11 @@ export default (props) => {
             <TextField source="id" />
           </ReferenceField>
           <ReferenceField
-            label={globalText.text_room}
-            source="room.id"
-            reference="Room"
+            label={globalText.text_member}
+            source="user.id"
+            reference="User"
           >
-            <TextField source="name" />
-          </ReferenceField>
-
-          <ReferenceField
-            label={globalText.text_event}
-            source="event.id"
-            reference="Event"
-          >
-            <TextField source="id" />
+            <TextField source="userId" />
           </ReferenceField>
           <DateField
             label={globalText.text_createdAt}

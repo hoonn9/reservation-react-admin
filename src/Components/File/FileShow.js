@@ -2,17 +2,11 @@ import React from "react";
 import {
   TextField,
   ReferenceField,
-  Labeled,
   Show,
   SimpleShowLayout,
-  RichTextField,
   DateField,
-  ReferenceManyField,
-  SingleFieldList,
-  ChipField,
   UrlField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
 export default (props) => {
@@ -40,6 +34,14 @@ export default (props) => {
           label={globalText.text_event}
           source="event.id"
           reference="Event"
+        >
+          <TextField source="title" />
+        </ReferenceField>
+
+        <ReferenceField
+          label={globalText.text_event}
+          source="popup.id"
+          reference="Popup"
         >
           <TextField source="id" />
         </ReferenceField>

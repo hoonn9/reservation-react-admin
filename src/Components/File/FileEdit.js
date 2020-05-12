@@ -1,61 +1,16 @@
 import React from "react";
 import {
-  List,
-  SimpleList,
-  Datagrid,
-  TextField,
-  ReferenceField,
-  EditButton,
-  ShowButton,
   Edit,
   SimpleForm,
   TextInput,
   ReferenceInput,
   SelectInput,
-  Create,
-  Filter,
-  FunctionField,
-  Labeled,
-  Show,
-  SimpleShowLayout,
-  RichTextField,
-  NumberInput,
   DateTimeInput,
-  DateField,
-  useMutation,
-  Button,
-  Form,
-  TopToolbar,
-  SaveButton,
-  ReferenceManyField,
-  SingleFieldList,
-  ChipField,
+  required,
 } from "react-admin";
-import styled from "styled-components";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 import FileTitle from "./FileTitle";
-
-const EditActions = ({ basePath, data, resource }) => (
-  <TopToolbar>
-    <ShowButton basePath={basePath} record={data} />
-    {/* Add your custom actions */}
-    <SaveButton
-      onSave={(event) => {
-        console.log("event");
-      }}
-    />
-  </TopToolbar>
-);
-
-const ApproveButton = ({ record }) => {
-  const [approve, { loading }] = useMutation({
-    type: "update",
-    resource: "comments",
-    payload: { id: record.id, data: { isApproved: true } },
-  });
-  return <Button label="Approve" onClick={approve} disabled={loading} />;
-};
 
 const InputConvert = ({ record }) => {
   if (record) {
@@ -69,7 +24,7 @@ const InputConvert = ({ record }) => {
           <TextInput source="id" />
         </ReferenceInput>
       );
-    } else {
+    } else if (record.room) {
       return (
         <ReferenceInput
           label={globalText.text_room}
@@ -80,6 +35,28 @@ const InputConvert = ({ record }) => {
           <SelectInput optionText="name" />
         </ReferenceInput>
       );
+    } else if (record.event) {
+      return (
+        <ReferenceInput
+          label={globalText.text_room}
+          source="event.id"
+          reference="Event"
+          allowEmpty
+        >
+          <SelectInput optionText="title" />
+        </ReferenceInput>
+      );
+    } else if (record.popup) {
+      return (
+        <ReferenceInput
+          label={globalText.text_room}
+          source="popup.id"
+          reference="Popup"
+          allowEmpty
+        >
+          <SelectInput optionText="id" />
+        </ReferenceInput>
+      );
     }
   }
 };
@@ -87,8 +64,17 @@ const InputConvert = ({ record }) => {
 export default (props) => (
   <Edit title={<FileTitle />} {...props}>
     <SimpleForm>
-      <TextInput disabled label={`${globalText.text_file} ID`} source="id" />
-      <TextInput label={globalText.text_url} source="url" />
+      <TextInput
+        disabled
+        label={`${globalText.text_file} ID`}
+        source="id"
+        validate={[required()]}
+      />
+      <TextInput
+        label={globalText.text_url}
+        source="url"
+        validate={[required()]}
+      />
       <InputConvert {...props} record={props.record} />
       <DateTimeInput
         disabled

@@ -1,6 +1,4 @@
-import React from "react";
 import { getSafe } from "../Utils";
-import axios from "axios";
 
 export default (params, resourceName, fetchType) => {
   const convertParams = params;
@@ -187,10 +185,44 @@ export default (params, resourceName, fetchType) => {
       };
     }
   } else if (resourceName === "File") {
-    if (fetchType === "UPDATE") {
+    if (fetchType === "CREATE") {
+      let postId = getSafe(params, "params.data.post.id");
+      let roomId = getSafe(params, "params.data.room.id");
+      let eventId = getSafe(params, "params.data.event.id");
+      let popupId = getSafe(params, "params.data.popup.id");
+      const {
+        data: { url },
+      } = params;
+      if (postId) {
+        convertParams.data = {
+          post: { id: postId },
+          url,
+        };
+      }
+      if (roomId) {
+        convertParams.data = {
+          room: { id: roomId },
+          url,
+        };
+      }
+      if (eventId) {
+        convertParams.data = {
+          event: { id: eventId },
+          url,
+        };
+      }
+      if (popupId) {
+        convertParams.data = {
+          popup: { id: popupId },
+          url,
+        };
+      }
+    } else if (fetchType === "UPDATE") {
       console.log(params.data);
       let postId = getSafe(params, "params.data.post.id");
       let roomId = getSafe(params, "params.data.room.id");
+      let eventId = getSafe(params, "params.data.event.id");
+      let popupId = getSafe(params, "params.data.popup.id");
       const {
         data: { id, url },
       } = params;
@@ -208,6 +240,20 @@ export default (params, resourceName, fetchType) => {
           url,
         };
       }
+      if (eventId) {
+        convertParams.data = {
+          id,
+          event: { id: eventId },
+          url,
+        };
+      }
+      if (popupId) {
+        convertParams.data = {
+          id,
+          popup: { id: popupId },
+          url,
+        };
+      }
     }
   } else if (resourceName === "Room") {
     if (fetchType === "UPDATE") {
@@ -219,6 +265,17 @@ export default (params, resourceName, fetchType) => {
         name,
         count,
         price,
+      };
+    }
+  } else if (resourceName === "Board") {
+    if (fetchType === "UPDATE") {
+      const {
+        data: { id, name },
+      } = params;
+
+      convertParams.data = {
+        id,
+        name,
       };
     }
   } else if (resourceName === "Event") {
@@ -280,6 +337,25 @@ export default (params, resourceName, fetchType) => {
         url,
       };
     }
+  } else if (resourceName === "Comment") {
+    if (fetchType === "UPDATE") {
+      const {
+        data: {
+          id,
+          user: { id: userId },
+          post: { id: postId },
+          text,
+        },
+      } = params;
+
+      convertParams.data = {
+        id,
+        user: { id: userId },
+        post: { id: postId },
+        text,
+      };
+    }
   }
+
   return convertParams;
 };

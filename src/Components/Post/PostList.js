@@ -17,16 +17,6 @@ import {
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
-const SimplePostList = (props) => (
-  <List {...props}>
-    <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-    />
-  </List>
-);
-
 const PostFilter = (props) => (
   <Filter {...props}>
     <TextInput label="ID" source="user.id" alwaysOn />
@@ -51,7 +41,14 @@ export default (props) => {
   return (
     <List {...props} filters={<PostFilter />}>
       {isSmall ? (
-        <SimplePostList {...props} />
+        <SimpleList
+          {...props}
+          primaryText={(record) => record.title}
+          secondaryText={(record) =>
+            new Date(record.createdAt).toLocaleDateString()
+          }
+          tertiaryText={(record) => record.user.id}
+        />
       ) : (
         <Datagrid>
           <TextField label={`${globalText.text_post} ID`} source="id" />

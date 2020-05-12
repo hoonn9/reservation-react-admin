@@ -2,25 +2,17 @@ import React from "react";
 import {
   TextField,
   ReferenceField,
-  Labeled,
   Show,
   SimpleShowLayout,
-  RichTextField,
   DateField,
-  ReferenceManyField,
-  SingleFieldList,
-  ChipField,
-  UrlField,
 } from "react-admin";
-import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
 export default (props) => {
   return (
     <Show {...props}>
       <SimpleShowLayout>
-        <TextField label={`${globalText.text_post} ID`} source="id" />
-        <UrlField label={globalText.text_url} source="url" />
+        <TextField label={`${globalText.text_comment} ID`} source="id" />
         <ReferenceField
           label={globalText.text_post}
           source="post.id"
@@ -29,20 +21,13 @@ export default (props) => {
           <TextField source="id" />
         </ReferenceField>
         <ReferenceField
-          label={globalText.text_room}
-          source="room.id"
-          reference="Room"
+          label={globalText.text_member}
+          source="user.id"
+          reference="User"
         >
-          <TextField source="name" />
+          <TextField source="userId" />
         </ReferenceField>
-
-        <ReferenceField
-          label={globalText.text_event}
-          source="event.id"
-          reference="Event"
-        >
-          <TextField source="id" />
-        </ReferenceField>
+        <TextField label={globalText.text_content} source="text" />
         <DateField
           showTime
           label={globalText.text_createdAt}

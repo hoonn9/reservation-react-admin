@@ -195,6 +195,7 @@ class App extends Component {
           options={{ label: globalText.text_pack }}
           icon={PackIcon}
           list={PackList}
+          show={PackShow}
           edit={PackEdit}
           create={PackCreate}
         />

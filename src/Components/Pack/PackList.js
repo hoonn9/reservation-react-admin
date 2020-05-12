@@ -18,16 +18,6 @@ import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 import PackTitle from "./PackTitle";
 
-const SimpleCustomList = (props) => (
-  <List {...props}>
-    <SimpleList
-      primaryText={(record) => record.title}
-      secondaryText={(record) => `${record.views} views`}
-      tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-    />
-  </List>
-);
-
 const CustomFilter = (props) => (
   <Filter {...props}>
     <TextInput label="ID" source="pack.id" alwaysOn />
@@ -48,7 +38,11 @@ export default (props) => {
   return (
     <List {...props} title={<PackTitle />} filters={<CustomFilter />}>
       {isSmall ? (
-        <SimpleCustomList {...props} />
+        <SimpleList
+          primaryText={(record) => record.name}
+          secondaryText={(record) => record.price}
+          tertiaryText={(record) => record.room.name}
+        />
       ) : (
         <Datagrid>
           <TextField label={`${globalText.text_pack} ID`} source="id" />

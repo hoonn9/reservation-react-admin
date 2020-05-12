@@ -251,4 +251,20 @@ export default {
       }
     `,
   },
+  Comment: {
+    [GET_LIST]: gql`
+      fragment comment on Comment {
+        id
+        post {
+          id
+        }
+        user {
+          id
+          userId
+        }
+        text
+        createdAt
+      }
+    `,
+  },
 };

@@ -4,7 +4,6 @@ import {
   List,
   Datagrid,
   TextField,
-  ReferenceField,
   EditButton,
   ShowButton,
   DateField,
@@ -13,21 +12,19 @@ import {
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
 
-const SimpleBoardList = (props) => (
-  <SimpleList
-    {...props}
-    primaryText={(record) => record.id}
-    secondaryText={(record) => record.name}
-    tertiaryText={(record) => new Date(record.createdAt).toLocaleDateString()}
-  />
-);
-
 export default (props) => {
   const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   return (
     <List {...props}>
       {isSmall ? (
-        <SimpleBoardList {...props} />
+        <SimpleList
+          {...props}
+          primaryText={(record) => record.id}
+          secondaryText={(record) => record.name}
+          tertiaryText={(record) =>
+            new Date(record.createdAt).toLocaleDateString()
+          }
+        />
       ) : (
         <Datagrid>
           <TextField label={`${globalText.text_board} ID`} source="id" />

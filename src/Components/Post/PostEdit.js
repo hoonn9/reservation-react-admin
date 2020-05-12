@@ -1,32 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "@material-ui/core";
 import {
-  List,
-  SimpleList,
-  Datagrid,
-  TextField,
-  ReferenceField,
-  EditButton,
-  ShowButton,
   Edit,
   SimpleForm,
   TextInput,
   ReferenceInput,
   SelectInput,
-  Create,
-  Filter,
-  FunctionField,
-  Labeled,
-  Show,
-  SimpleShowLayout,
-  RichTextField,
   NumberInput,
   DateTimeInput,
-  DateField,
-  useMutation,
-  Button,
-  Form,
-  TopToolbar,
   SaveButton,
   ReferenceManyField,
   SingleFieldList,
@@ -35,6 +16,7 @@ import {
   useRedirect,
   useNotify,
   Toolbar,
+  required,
 } from "react-admin";
 import { dateOptions } from "../../Utils";
 import { globalText } from "../../GlobalText";
@@ -42,12 +24,7 @@ import PostTitle from "./PostTitle";
 import axios from "axios";
 import { print } from "graphql";
 import { Editor } from "react-draft-wysiwyg";
-import {
-  EditorState,
-  ContentState,
-  convertToRaw,
-  convertFromRaw,
-} from "draft-js";
+import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import { CONNECT_FILE } from "../../SharedQueries";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { mobileEditorStyle, editorStyle } from "../../Utils";
@@ -156,20 +133,33 @@ export default (props) => {
           />
         }
       >
-        <TextInput disabled label={`${globalText.text_post} ID`} source="id" />
-        <TextInput label={`${globalText.text_member} ID`} source={"user.id"} />
+        <TextInput
+          disabled
+          label={`${globalText.text_post} ID`}
+          source="id"
+          validate={[required()]}
+        />
+        <TextInput
+          label={`${globalText.text_member} ID`}
+          source={"user.id"}
+          validate={[required()]}
+        />
         <ReferenceInput
           label={`${globalText.text_board} ID`}
           source="board.id"
           reference="Board"
         >
-          <SelectInput optionText="name" />
+          <SelectInput optionText="name" validate={[required()]} />
         </ReferenceInput>
         <TextInput
           label={`${globalText.text_post} ${globalText.text_type}`}
           source="postType"
         />
-        <TextInput label={globalText.text_title} source="title" />
+        <TextInput
+          label={globalText.text_title}
+          source="title"
+          validate={[required()]}
+        />
         <Editor
           wrapperClassName="wrapper-class"
           editorClassName="editor-class"
@@ -191,7 +181,11 @@ export default (props) => {
           }}
         />
 
-        <NumberInput label={globalText.text_views} source="views" />
+        <NumberInput
+          label={globalText.text_views}
+          source="views"
+          validate={[required()]}
+        />
         <ReferenceManyField
           label={globalText.text_files}
           target="post.id"
